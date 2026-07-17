@@ -1,6 +1,8 @@
 # Locality and Weight Sharing Shape Hebbian Principal-Component Learning in Biologically Constrained Visual Models
 
-This repository contains the code used to evaluate Hebbian principal-component analysis (HPCA) in three visual-learning regimes:
+**Authors:** Patrick Inoue, Florian Rohrbein, and Andreas Knoblauch
+
+This repository accompanies the manuscript *Locality and Weight Sharing Shape Hebbian Principal-Component Learning in Biologically Constrained Visual Models* and contains the code used to evaluate Hebbian principal-component analysis (HPCA) in three visual-learning regimes:
 
 1. fully connected HPCA;
 2. locally connected, non-weight-shared HPCA; and
@@ -13,10 +15,12 @@ Experiments were conducted on MNIST, CIFAR-10, and STL-10. CIFAR-10 is the prima
 ```text
 .
 ├── README.md
-├── LICENSE
 ├── THIRD_PARTY_NOTICES.md
 ├── requirements.txt
 ├── local/
+│   ├── LICENSE
+│   ├── local_connected_hebbian_experiment.py
+│   └── hpca_loader.py
 ├── softhebb/
 └── modular-hebbian-cnn/
 ```
@@ -233,13 +237,58 @@ python local_connected_hebbian_experiment.py seed=10 use_mask=True 2>&1 | tee lo
 
 Repeated-run results are reported as mean and standard deviation over the archived seed set. Test labels are not used during HPCA feature learning or preprocessing estimation.
 
+## Citation
+
+If you use this repository or the HPCA implementation in research, please cite the accompanying manuscript:
+
+```bibtex
+@unpublished{inoue2026locality,
+  title  = {Locality and Weight Sharing Shape Hebbian Principal-Component Learning in Biologically Constrained Visual Models},
+  author = {Inoue, Patrick and Rohrbein, Florian and Knoblauch, Andreas},
+  note   = {Manuscript submitted for publication},
+  year   = {2026}
+}
+```
+
+The convolutional replication folders build on the following publications and codebases. Cite the corresponding work when using either replication component.
+
+### SoftHebb
+
+Upstream repository: <https://github.com/NeuromorphicComputing/SoftHebb>
+
+```bibtex
+@inproceedings{journe2023hebbian,
+  title     = {Hebbian Deep Learning Without Feedback},
+  author    = {Journ{\'e}, Adrien and Garcia Rodriguez, Hector and Guo, Qinghai and Moraitis, Timoleon},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2023},
+  url       = {https://openreview.net/forum?id=8gd4M-_Rj1}
+}
+```
+
+### Modular Hebbian-CNN benchmark
+
+Upstream repository: <https://github.com/Julian-JN/Advancing-the-Biological-Plausibility-and-Efficacy-of-Hebbian-Convolutional-Neural-Networks>
+
+```bibtex
+@article{nimmo2025advancing,
+  title   = {Advancing the Biological Plausibility and Efficacy of Hebbian Convolutional Neural Networks},
+  author  = {Jim{\'e}nez Nimmo, Julian and Mondrag{\'o}n, Esther},
+  journal = {Neural Networks},
+  volume  = {190},
+  pages   = {107628},
+  year    = {2025},
+  doi     = {10.1016/j.neunet.2025.107628}
+}
+```
+
 ## License and third-party code
 
-Original code and documentation authored for this study are licensed under the Apache License 2.0; see `LICENSE`.
+The original TensorFlow implementation in `local/` is licensed under the Apache License 2.0; see `local/LICENSE`.
 
 The licensing scope does not override third-party rights:
 
-- `modular-hebbian-cnn/` is derived from an Apache-2.0-licensed upstream repository and retains its upstream license and notices.
-- The upstream SoftHebb repository does not contain an explicit open-source license file. The root Apache-2.0 license therefore does not apply to upstream SoftHebb code in `softhebb/`, and this repository grants no additional rights to that third-party code.
+- `modular-hebbian-cnn/` is derived from an Apache-2.0-licensed upstream repository and retains its upstream license, copyright notices, and attribution requirements.
+- The upstream SoftHebb repository does not provide an explicit open-source license file. The Apache-2.0 license in `local/` therefore does not apply to upstream SoftHebb code in `softhebb/`, and this repository grants no additional rights to that third-party code.
 
-See `THIRD_PARTY_NOTICES.md` for provenance and licensing details.
+See `THIRD_PARTY_NOTICES.md` for provenance, modifications, and licensing details.
