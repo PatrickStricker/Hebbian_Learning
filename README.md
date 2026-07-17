@@ -219,8 +219,6 @@ python local_connected_hebbian_experiment.py \
   use_extended_readout=False
 ```
 
-Use the same command structure with the archived seed values for repeated runs.
-
 ## Convolutional benchmark replications
 
 The `softhebb/` and `modular-hebbian-cnn/` directories preserve the respective benchmark implementations, the added HPCA modes, and the exact experiment configurations used for the reported reference and matched HPCA conditions. Each directory contains its own environment and execution documentation. Run convolutional experiments from within the corresponding directory so that its local imports and configuration paths are resolved correctly.
@@ -234,8 +232,6 @@ The local script prints training loss, training accuracy, test loss, and test ac
 ```bash
 python local_connected_hebbian_experiment.py seed=10 use_mask=True 2>&1 | tee local_seed10.log
 ```
-
-Repeated-run results are reported as mean and standard deviation over the archived seed set. Test labels are not used during HPCA feature learning or preprocessing estimation.
 
 ## Citation
 
