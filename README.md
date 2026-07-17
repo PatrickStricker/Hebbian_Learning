@@ -6,7 +6,7 @@ This repository contains the code used to evaluate Hebbian principal-component a
 2. locally connected, non-weight-shared HPCA; and
 3. shared-kernel convolutional HPCA in two established Hebbian-CNN benchmark implementations.
 
-Experiments were conducted on MNIST, CIFAR-10, and STL-10. CIFAR-10 is the primary benchmark; MNIST and STL-10 provide lower- and higher-complexity controls. The repository is organized for anonymous peer review.
+Experiments were conducted on MNIST, CIFAR-10, and STL-10. CIFAR-10 is the primary benchmark; MNIST and STL-10 provide lower- and higher-complexity controls.
 
 ## Repository structure
 
