@@ -102,7 +102,7 @@ orig, flip, rot, shift
 
 Augmentation is applied only to training data. Test data are not augmented.
 
-The dataset name is selected in the call to `load_hpca_preprocessed(dataset=...)` in the experiment entry point. It is not a command-line parameter. The image geometry and model input dimensionality in the selected experiment script must correspond to the selected dataset.
+The dataset name is selected in the call to `load_hpca_preprocessed(dataset=...)` in the experiment entry point. It is not a command-line parameter. The image geometry and model input dimensionality in the selected experiment script must correspond to the selected dataset. The included local experiment entry point is configured for CIFAR-10 with 32 x 32 x 3 inputs. Although `hpca_loader.py` supports MNIST, CIFAR-10, and STL-10, changing the dataset also requires matching the image geometry, receptive-field construction, and model input dimensionality in the experiment script.
 
 ## Training protocol
 
