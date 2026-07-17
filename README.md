@@ -1,70 +1,54 @@
 # Locality and Weight Sharing Shape Hebbian Principal-Component Learning in Biologically Constrained Visual Models
 
-This repository contains the code used to evaluate Hebbian principal-component analysis (HPCA) across three visual-learning regimes:
+This repository contains the code used to evaluate Hebbian principal-component analysis (HPCA) in three visual-learning regimes:
 
 1. fully connected HPCA;
 2. locally connected, non-weight-shared HPCA; and
-3. shared-kernel convolutional HPCA implemented in two established Hebbian-CNN benchmark codebases.
+3. shared-kernel convolutional HPCA in two established Hebbian-CNN benchmark implementations.
 
-The experiments use MNIST, CIFAR-10, and STL-10. CIFAR-10 is the primary benchmark, while MNIST and STL-10 provide lower- and higher-complexity controls.
-
-This repository is organized for anonymous peer review.
+Experiments were conducted on MNIST, CIFAR-10, and STL-10. CIFAR-10 is the primary benchmark; MNIST and STL-10 provide lower- and higher-complexity controls. The repository is organized for anonymous peer review.
 
 ## Repository structure
-
-The repository contains three top-level experiment directories. The commands below assume the following directory names:
 
 ```text
 .
 ├── README.md
+├── LICENSE
+├── THIRD_PARTY_NOTICES.md
 ├── requirements.txt
 ├── local/
-│   ├── local_connected_hebbian_experiment.py
-│   ├── hpca_loader.py
 ├── softhebb/
-│   ├── README.md
-│   ├── configs/
-│   ├── scripts/
-│   ├── modified_files/
-│   └── results/
 └── modular-hebbian-cnn/
-    ├── README.md
-    ├── configs/
-    ├── scripts/
-    ├── modified_files/
-    └── results/
 ```
 
-### `local/`: fully connected and locally connected HPCA
+### `local/`
 
-This directory contains the TensorFlow implementation developed for the present study. The same HPCA update is used for both architectural conditions:
+TensorFlow implementation of the fully connected and locally connected HPCA experiments developed for this study. The same HPCA update is used in both conditions. The `use_mask` switch selects the connectivity regime:
 
-- `use_mask=False`: fully connected HPCA baseline;
+- `use_mask=False`: fully connected HPCA;
 - `use_mask=True`: locally connected HPCA with fixed receptive-field support and position-specific weights.
 
-The directory also contains the preprocessing pipeline for CIFAR-10, and STL-10, together with the energy-pooling and supervised-readout ablations.
+This directory also contains the preprocessing loader, data augmentation, population-wise divisive normalization, energy pooling, and supervised-readout variants.
 
-### `softhebb/`: original SoftHebb replication and HPCA substitution
+### `softhebb/`
 
-This directory extends the public SoftHebb implementation:
+Replication of the original SoftHebb benchmark and the matched HPCA substitution. This code is based on the upstream repository:
 
-- upstream repository: <https://github.com/NeuromorphicComputing/SoftHebb>
-- reference condition: original SoftHebb learning rule and protocol;
-- matched intervention: HPCA replaces the layer-local synaptic update while the surrounding architecture, competition, preprocessing, schedule, and supervised readout remain tied to the reference implementation.
+<https://github.com/NeuromorphicComputing/SoftHebb>
 
-### `modular-hebbian-cnn/`: modular benchmark replication and HPCA substitution
+The reference condition retains the original SoftHebb learning rule and protocol. In the matched HPCA condition, the layer-local update is replaced by HPCA while the surrounding architecture and benchmark protocol are retained.
 
-This directory extends the modular Hebbian-CNN benchmark:
+### `modular-hebbian-cnn/`
 
-- upstream repository: <https://github.com/Julian-JN/Advancing-the-Biological-Plausibility-and-Efficacy-of-Hebbian-Convolutional-Neural-Networks>
-- reference condition: the reproduced Hard-WTA BCM benchmark configuration;
-- matched intervention: the same benchmark configuration with the local update mode replaced by HPCA.
+Replication of the modular Hebbian-CNN Hard-WTA BCM benchmark and the matched HPCA substitution. This code is based on the upstream repository:
 
-As in the SoftHebb replication, architecture, competition, preprocessing, normalization, schedule, and readout settings should remain fixed within each matched comparison. The directory must document the upstream commit and all local modifications.
+<https://github.com/Julian-JN/Advancing-the-Biological-Plausibility-and-Efficacy-of-Hebbian-Convolutional-Neural-Networks>
+
+The reference condition uses the reproduced Hard-WTA BCM configuration. The matched condition replaces the local update mode with HPCA while retaining the remaining benchmark configuration.
 
 ## Environment
 
-The local fully connected and locally connected experiments use Python 3.10 and TensorFlow. Install the direct dependencies from the repository root:
+The fully connected and locally connected experiments use Python 3.10 and TensorFlow 2.12. From the repository root:
 
 ```bash
 python -m venv .venv
@@ -73,7 +57,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-The minimal `requirements.txt` for the TensorFlow implementation is:
+The root `requirements.txt` contains:
 
 ```text
 numpy==1.23.5
@@ -82,301 +66,180 @@ tensorflow==2.12.0
 tensorflow-datasets==4.9.7
 ```
 
-`tensorflow-datasets` is required for STL-10. MNIST and CIFAR-10 are downloaded through the Keras dataset interface.
+`tensorflow-datasets` is used for STL-10. MNIST and CIFAR-10 are loaded through the TensorFlow/Keras dataset interfaces.
 
-The two convolutional replication folders may require separate PyTorch environments matching their respective upstream implementations. Use the environment specification included in each replication folder rather than installing both benchmark stacks into the TensorFlow environment.
+The two convolutional replication directories use their own PyTorch environments and benchmark-specific dependency files.
 
-## Datasets
+## Datasets and preprocessing
 
-The experiments use the official training and test splits of:
-
-| Dataset | Original image shape | Classes | Loader |
+| Dataset | Input images | Classes | Loader |
 |---|---:|---:|---|
 | MNIST | 28 x 28 x 1 | 10 | `tf.keras.datasets.mnist` |
 | CIFAR-10 | 32 x 32 x 3 | 10 | `tf.keras.datasets.cifar10` |
 | STL-10 | 96 x 96 x 3 | 10 | `tensorflow_datasets` |
 
-For the local TensorFlow implementation, STL-10 is area-downsampled from 96 x 96 to 32 x 32 when `stl_downsample_to_32=True`.
+For the local TensorFlow experiments, STL-10 can be area-downsampled from 96 x 96 to 32 x 32 using `stl_downsample_to_32=True`.
 
-No test labels are used for feature learning, preprocessing selection, hyperparameter selection, or early stopping. Test accuracy is evaluated only after the unsupervised feature-learning stage and supervised readout training.
+The preprocessing pipeline in `local/hpca_loader.py` performs:
 
-## Local preprocessing pipeline
+1. conversion to `float32`, flattening, and scaling by `1/255`;
+2. per-sample mean subtraction;
+3. per-sample RMS normalization;
+4. feature-wise standardization using training-set statistics;
+5. per-sample L2 normalization;
+6. optional training augmentation; and
+7. construction of stratified, shuffled, batched `tf.data.Dataset` objects.
 
-The preprocessing implemented in `local/hpca_loader.py` is fitted on the training data and then applied to the test data:
-
-1. convert images to `float32`, flatten them, and scale pixel values by `1/255`;
-2. subtract the mean of each sample;
-3. divide each sample by its root-mean-square magnitude;
-4. standardize each feature using training-set mean and variance;
-5. normalize each sample to unit Euclidean norm;
-6. optionally generate augmented training blocks; and
-7. construct stratified, shuffled, batched `tf.data.Dataset` objects.
-
-The current loader implements the following augmentation blocks:
+The implemented augmentation blocks are:
 
 ```text
 orig, flip, rot, shift
 ```
 
-Augmentation is applied to training data only. Test data are never augmented.
+Augmentation is applied only to training data. Test data are not augmented.
+
+The dataset name is selected in the call to `load_hpca_preprocessed(dataset=...)` in the experiment entry point. It is not a command-line parameter. The image geometry and model input dimensionality in the selected experiment script must correspond to the selected dataset.
 
 ## Training protocol
 
-All fully connected and locally connected experiments use a two-stage protocol.
+The fully connected and locally connected experiments use two stages.
 
 ### Stage 1: unsupervised HPCA feature learning
 
-Only the first feature layer, `joint_fc`, is updated. The update is computed manually from batch-averaged presynaptic and postsynaptic responses. For the locally connected condition, the fixed receptive-field mask is reapplied after every update, so all weights outside the assigned support remain zero.
+Only the first feature layer, `joint_fc`, is updated. The update is computed from batch-averaged presynaptic and postsynaptic responses. Class labels are not used. In the locally connected condition, the fixed connectivity mask is reapplied after every update so that weights outside the assigned receptive fields remain zero.
 
-Class labels are not used during this stage.
+### Stage 2: supervised evaluation
 
-### Stage 2: supervised evaluation of the frozen representation
+After unsupervised feature learning, `joint_fc` and the optional energy-pooling layer are frozen. The final classifier is trained with sparse categorical cross-entropy. When `use_extended_readout=True`, an additional supervised GELU hidden layer is trained before the classifier. This downstream readout does not update the frozen HPCA feature extractor.
 
-After HPCA learning:
+The local experiment script uses Adam with learning rate `0.003` for 500 supervised readout epochs.
 
-- `joint_fc` is frozen;
-- the energy-pooling layer is frozen;
-- the optional nonlinear readout head is trained only when `use_extended_readout=True`; and
-- the final classifier is always trained.
+## Experiment controls
 
-The supervised objective is sparse categorical cross-entropy. In the supplied local script, the readout is optimized with Adam at learning rate `0.003` for 500 epochs. The additional nonlinear head is a downstream decoder and does not update the frozen HPCA feature extractor.
-
-## Local experiment controls
-
-The local entry point uses `key=value` command-line arguments:
+The local entry point accepts `key=value` command-line arguments:
 
 ```bash
+cd local
 python local_connected_hebbian_experiment.py seed=10 augment=True use_mask=True
 ```
 
 Boolean values accept `true/false`, `1/0`, `yes/no`, or `y/n`, without case sensitivity.
 
-### Configurable parameters
-
-| Parameter | Default | Role |
+| Parameter | Default | Function |
 |---|---:|---|
-| `seed` | `10` in `par` | Dataset shuffling, augmentation RNG, model initialization, and receptive-field assignment. Pass this explicitly for every reported run. |
-| `deterministic` | `True` | Requests deterministic TensorFlow operations in addition to setting Python, NumPy, and TensorFlow seeds. |
-| `batch_size` | `4000` | Batch size used by the stratified training datasets. |
-| `num_classes` | `10` | Number of output classes. All three datasets use ten classes. |
-| `n_hidden` | derived from `len(pop_id)` | Number of HPCA units. In the supplied script this is coupled to `N_post=20000`; do not change it independently of the mask construction. |
-| `epochs` | `20` | Number of unsupervised HPCA passes over each training or augmentation block. |
-| `eps` | `5e-5` | HPCA update step size. This is a learning-rate parameter, not merely a numerical epsilon. |
-| `input_dropout` | `0.1` | Dropout applied at the model input when the Keras model is called with `training=True`. The manual HPCA call explicitly uses `dropout_rate=0.0`, so this parameter affects supervised readout training, not the supplied unsupervised update loop. |
-| `head_dropout` | `0.1` | Dropout after the optional nonlinear readout head during supervised training. |
-| `update_step` | `500` | Progress interval and legacy learning-rate update hook. With `epochs=20`, only the epoch-zero progress message is reached. |
+| `seed` | `10` | Controls data shuffling, augmentation, initialization, and receptive-field assignment. Pass it explicitly for every run. |
+| `deterministic` | `True` | Requests deterministic TensorFlow operations and sets Python, NumPy, and TensorFlow seeds. |
+| `batch_size` | `4000` | Training batch size. |
+| `num_classes` | `10` | Number of output classes. |
+| `n_hidden` | `len(pop_id)` | Number of HPCA units; it must remain consistent with the receptive-field mask. |
+| `epochs` | `20` | Number of unsupervised HPCA training epochs. |
+| `eps` | `5e-5` | HPCA update step size. |
+| `input_dropout` | `0.1` | Input dropout used during supervised model calls. The unsupervised update loop passes `dropout_rate=0.0`. |
+| `head_dropout` | `0.1` | Dropout after the optional nonlinear readout layer. |
+| `update_step` | `500` | Interval used by the progress and learning-rate update hook. |
 | `augment` | `True` | Enables the `orig`, `flip`, `rot`, and `shift` training blocks. |
-| `use_mask` | `True` | `True` gives locally connected HPCA; `False` gives the dense baseline. |
-| `use_divisive_norm` | `True` | Enables absolute responses followed by population-wise divisive normalization. |
-| `use_energy_pooling` | `True` | Concatenates grouped RMS energy features to the HPCA representation. |
-| `use_extended_readout` | `True` | Enables one supervised GELU hidden layer before the classifier. `False` gives a linear classifier on the frozen representation. |
-| `head_units` | `2048` | Width of the optional supervised GELU readout layer. |
+| `use_mask` | `True` | Selects locally connected (`True`) or fully connected (`False`) HPCA. |
+| `use_divisive_norm` | `True` | Enables absolute responses followed by divisive normalization. |
+| `use_energy_pooling` | `True` | Concatenates grouped RMS energy features to the normalized HPCA representation. |
+| `use_extended_readout` | `True` | Enables the supervised GELU readout layer before the classifier. |
+| `head_units` | `2048` | Width of the optional supervised readout layer. |
 
-## Mapping paper conditions to local options
-
-The following settings reproduce the architectural switches implemented by the local script. Use the exact seed list and any dataset-specific settings committed in `local/configs/` for the final repeated experiments.
-
-| Condition | Core settings |
-|---|---|
-| Fully connected HPCA baseline | `use_mask=False` |
-| Standard locally connected HPCA | `use_mask=True augment=True use_energy_pooling=True use_extended_readout=True` |
-| No augmentation ablation | standard local settings plus `augment=False` |
-| No energy-pooling ablation | standard local settings plus `use_energy_pooling=False` |
-| Linear-readout ablation | standard local settings plus `use_extended_readout=False` |
-| No divisive normalization | standard local settings plus `use_divisive_norm=False`; this is an implementation option and should only be reported if it belongs to the registered experiment matrix |
+With `use_mask=False`, the connection mask is dense. When divisive normalization remains enabled, the implementation assigns all hidden units to one response population.
 
 ## Running the local experiments
 
-Run commands from the `local/` directory:
+The commands below control the architectural conditions and ablations. Dataset selection remains source-level as described above.
+
+### Locally connected HPCA
 
 ```bash
 cd local
-```
-
-### Standard locally connected HPCA
-
-```bash
 python local_connected_hebbian_experiment.py \
-  dataset=cifar10 \
-  seed=SEED \
-  deterministic=True \
-  use_mask=True \
-  augment=True \
+  seed=10 deterministic=True \
+  batch_size=4000 epochs=20 eps=5e-5 \
+  augment=True use_mask=True \
   use_divisive_norm=True \
   use_energy_pooling=True \
-  use_extended_readout=True \
-  head_units=2048 \
-  batch_size=4000 \
-  epochs=20 \
-  eps=5e-5
+  use_extended_readout=True head_units=2048
 ```
 
-Replace `dataset=cifar10` with `dataset=stl10` for the corresponding dataset-specific run.
-
-### Fully connected baseline
+### Fully connected HPCA
 
 ```bash
+cd local
 python local_connected_hebbian_experiment.py \
-  dataset=cifar10 \
-  seed=SEED \
-  deterministic=True \
-  use_mask=False \
-  augment=True \
+  seed=10 deterministic=True \
+  batch_size=4000 epochs=20 eps=5e-5 \
+  augment=True use_mask=False \
   use_divisive_norm=True \
   use_energy_pooling=True \
-  use_extended_readout=True \
-  head_units=2048 \
-  batch_size=4000 \
-  epochs=20 \
-  eps=5e-5
+  use_extended_readout=True head_units=2048
 ```
 
-### No augmentation
+### No data augmentation
 
 ```bash
+cd local
 python local_connected_hebbian_experiment.py \
-  dataset=cifar10 seed=SEED deterministic=True \
-  use_mask=True augment=False \
-  use_divisive_norm=True use_energy_pooling=True \
-  use_extended_readout=True head_units=2048 \
-  batch_size=4000 epochs=20 eps=5e-5
+  seed=10 deterministic=True \
+  batch_size=4000 epochs=20 eps=5e-5 \
+  augment=False use_mask=True \
+  use_divisive_norm=True \
+  use_energy_pooling=True \
+  use_extended_readout=True head_units=2048
 ```
 
 ### No energy pooling
 
 ```bash
+cd local
 python local_connected_hebbian_experiment.py \
-  dataset=cifar10 seed=SEED deterministic=True \
-  use_mask=True augment=True \
-  use_divisive_norm=True use_energy_pooling=False \
-  use_extended_readout=True head_units=2048 \
-  batch_size=4000 epochs=20 eps=5e-5
+  seed=10 deterministic=True \
+  batch_size=4000 epochs=20 eps=5e-5 \
+  augment=True use_mask=True \
+  use_divisive_norm=True \
+  use_energy_pooling=False \
+  use_extended_readout=True head_units=2048
 ```
 
 ### Linear readout
 
 ```bash
+cd local
 python local_connected_hebbian_experiment.py \
-  dataset=cifar10 seed=SEED deterministic=True \
-  use_mask=True augment=True \
-  use_divisive_norm=True use_energy_pooling=True \
-  use_extended_readout=False \
-  batch_size=4000 epochs=20 eps=5e-5
+  seed=10 deterministic=True \
+  batch_size=4000 epochs=20 eps=5e-5 \
+  augment=True use_mask=True \
+  use_divisive_norm=True \
+  use_energy_pooling=True \
+  use_extended_readout=False
 ```
 
-## Running the SoftHebb replication folder
+Use the same command structure with the archived seed values for repeated runs.
 
-The `softhebb/` folder should provide two executable run scripts with all benchmark-specific arguments fixed in version-controlled configuration files:
+## Convolutional benchmark replications
+
+The `softhebb/` and `modular-hebbian-cnn/` directories preserve the respective benchmark implementations, the added HPCA modes, and the exact experiment configurations used for the reported reference and matched HPCA conditions. Each directory contains its own environment and execution documentation. Run convolutional experiments from within the corresponding directory so that its local imports and configuration paths are resolved correctly.
+
+The matched comparisons change the local learning rule while retaining the corresponding benchmark architecture, competition mechanism, preprocessing, normalization, training schedule, and supervised-readout protocol. Separately identified preprocessing or schedule sensitivity experiments use distinct configurations.
+
+## Output
+
+The local script prints training loss, training accuracy, test loss, and test accuracy after each supervised epoch. Logs can be retained with:
 
 ```bash
-cd softhebb
-
-# Reproduced original SoftHebb reference
-bash scripts/run_reference.sh
-
-# Matched HPCA substitution
-bash scripts/run_hpca.sh
+python local_connected_hebbian_experiment.py seed=10 use_mask=True 2>&1 | tee local_seed10.log
 ```
 
-The HPCA run must change only the layer-local learning-rule mode relative to the matched reference unless a separately identified preprocessing or schedule sensitivity condition is being reproduced.
+Repeated-run results are reported as mean and standard deviation over the archived seed set. Test labels are not used during HPCA feature learning or preprocessing estimation.
 
-For every run, the folder-level documentation should state:
+## License and third-party code
 
-- upstream repository URL and commit hash;
-- local commit or archive identifier;
-- modified source files;
-- exact learning-rule mode;
-- dataset and preprocessing protocol;
-- augmentation protocol;
-- layer-specific learning rates and schedule;
-- readout configuration;
-- seed list; and
-- output path.
+Original code and documentation authored for this study are licensed under the Apache License 2.0; see `LICENSE`.
 
-## Running the modular Hebbian-CNN replication folder
+The licensing scope does not override third-party rights:
 
-The `modular-hebbian-cnn/` folder should likewise expose the reference and matched HPCA runs:
+- `modular-hebbian-cnn/` is derived from an Apache-2.0-licensed upstream repository and retains its upstream license and notices.
+- The upstream SoftHebb repository does not contain an explicit open-source license file. The root Apache-2.0 license therefore does not apply to upstream SoftHebb code in `softhebb/`, and this repository grants no additional rights to that third-party code.
 
-```bash
-cd modular-hebbian-cnn
-
-# Reproduced Hard-WTA BCM reference
-bash scripts/run_hard_wta_bcm.sh
-
-# Matched HPCA substitution
-bash scripts/run_hpca.sh
-```
-
-If the common HPCA preprocessing sensitivity condition is included, keep it in a separately named script or config, for example:
-
-```bash
-bash scripts/run_hpca_common_preprocessing.sh
-```
-
-Do not overwrite the original benchmark configuration. Reference, HPCA-substitution, and preprocessing-sensitivity runs should remain distinct and independently executable.
-
-## Expected result organization
-
-A recommended results layout is:
-
-```text
-results/
-├── logs/
-├── metrics/
-├── checkpoints/
-└── figures/
-```
-
-Each run should record at least:
-
-```text
-dataset
-condition
-seed
-software environment
-source commit
-configuration file
-final test accuracy
-```
-
-The supplied local script prints training loss, training accuracy, test loss, and test accuracy to standard output after every supervised epoch. It does not automatically save checkpoints or structured metrics. Redirect standard output with `tee`, or use the archived wrapper scripts to write machine-readable summaries.
-
-Report repeated-run performance as mean and standard deviation over the exact archived seed list. Do not select epochs or configurations using the test set.
-
-## Reference values reported in the manuscript
-
-These values are included as end-to-end checks, not as tolerances for every hardware or software stack.
-
-### Fully connected and locally connected HPCA
-
-| Dataset or condition | Accuracy [%] |
-|---|---:|
-| CIFAR-10, fully connected HPCA | 52.72 +/- 0.64 |
-| CIFAR-10, standard locally connected HPCA | 60.78 +/- 0.51 |
-| CIFAR-10, optimizer-switch local variant | 61.54 +/- 0.26 |
-| CIFAR-10, no augmentation | 56.87 +/- 0.49 |
-| CIFAR-10, no energy pooling | 60.47 +/- 0.71 |
-| CIFAR-10, linear readout | 56.65 +/- 0.49 |
-| MNIST, fully connected HPCA | 96.96 +/- 0.21 |
-| MNIST, locally connected HPCA | 98.42 +/- 0.11 |
-| STL-10, fully connected HPCA | 41.67 +/- 0.57 |
-| STL-10, locally connected HPCA | 49.70 +/- 0.23 |
-| STL-10, optimizer-switch local variant | 50.51 +/- 0.40 |
-
-### Shared-kernel HPCA substitutions
-
-| Dataset or benchmark condition | Accuracy [%] |
-|---|---:|
-| CIFAR-10, modular benchmark HPCA, original preprocessing | 70.70 +/- 0.51 |
-| CIFAR-10, modular benchmark HPCA, common HPCA preprocessing | 74.47 +/- 0.43 |
-| CIFAR-10, original SoftHebb architecture with HPCA | 76.89 +/- 0.52 |
-| MNIST, modular benchmark HPCA | 98.00 +/- 0.15 |
-| MNIST, original SoftHebb architecture with HPCA | 98.82 +/- 0.19 |
-| STL-10, modular benchmark HPCA | 66.94 +/- 0.57 |
-| STL-10, original SoftHebb architecture with HPCA | 71.32 +/- 0.10 |
-
-Small numerical deviations can arise from hardware kernels and framework behavior. Material discrepancies should first be investigated against the archived commit, environment, preprocessing path, seed list, and exact run configuration.
-
-## License and upstream attribution
-
-The local implementation should be distributed under the license stated in this repository. The `softhebb/` and `modular-hebbian-cnn/` directories remain subject to their respective upstream licenses and attribution requirements. Do not remove upstream copyright, license, or citation files from the replication folders.
+See `THIRD_PARTY_NOTICES.md` for provenance and licensing details.
