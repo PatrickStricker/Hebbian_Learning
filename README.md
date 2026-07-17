@@ -16,9 +16,9 @@ Experiments were conducted on MNIST, CIFAR-10, and STL-10. CIFAR-10 is the prima
 .
 ├── README.md
 ├── THIRD_PARTY_NOTICES.md
-├── requirements.txt
+├── LICENSE
 ├── local/
-│   ├── LICENSE
+│   ├── requirements.txt
 │   ├── local_connected_hebbian_experiment.py
 │   └── hpca_loader.py
 ├── softhebb/
@@ -58,10 +58,10 @@ The fully connected and locally connected experiments use Python 3.10 and Tensor
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r local/requirements.txt
 ```
 
-The root `requirements.txt` contains:
+The root `local/requirements.txt` contains:
 
 ```text
 numpy==1.23.5
