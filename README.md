@@ -8,7 +8,7 @@ This repository contains the code used to evaluate Hebbian principal-component a
 
 The experiments use MNIST, CIFAR-10, and STL-10. CIFAR-10 is the primary benchmark, while MNIST and STL-10 provide lower- and higher-complexity controls.
 
-This repository is organized for anonymous peer review. Replace the archive and repository placeholders only after the review process permits de-anonymization.
+This repository is organized for anonymous peer review.
 
 ## Repository structure
 
@@ -21,9 +21,6 @@ The repository contains three top-level experiment directories. The commands bel
 ├── local/
 │   ├── local_connected_hebbian_experiment.py
 │   ├── hpca_loader.py
-│   ├── configs/
-│   ├── scripts/
-│   └── results/
 ├── softhebb/
 │   ├── README.md
 │   ├── configs/
@@ -38,8 +35,6 @@ The repository contains three top-level experiment directories. The commands bel
     └── results/
 ```
 
-If the checked-out repository uses different folder names, only the paths in the command examples must be adjusted.
-
 ### `local/`: fully connected and locally connected HPCA
 
 This directory contains the TensorFlow implementation developed for the present study. The same HPCA update is used for both architectural conditions:
@@ -47,7 +42,7 @@ This directory contains the TensorFlow implementation developed for the present 
 - `use_mask=False`: fully connected HPCA baseline;
 - `use_mask=True`: locally connected HPCA with fixed receptive-field support and position-specific weights.
 
-The directory also contains the preprocessing pipeline for MNIST, CIFAR-10, and STL-10, together with the energy-pooling and supervised-readout ablations.
+The directory also contains the preprocessing pipeline for CIFAR-10, and STL-10, together with the energy-pooling and supervised-readout ablations.
 
 ### `softhebb/`: original SoftHebb replication and HPCA substitution
 
@@ -56,8 +51,6 @@ This directory extends the public SoftHebb implementation:
 - upstream repository: <https://github.com/NeuromorphicComputing/SoftHebb>
 - reference condition: original SoftHebb learning rule and protocol;
 - matched intervention: HPCA replaces the layer-local synaptic update while the surrounding architecture, competition, preprocessing, schedule, and supervised readout remain tied to the reference implementation.
-
-The directory must retain the upstream license and attribution notices. It should also record the upstream commit, modified files, added HPCA mode, exact configuration files, random seeds, and executable commands used for the paper.
 
 ### `modular-hebbian-cnn/`: modular benchmark replication and HPCA substitution
 
@@ -68,21 +61,6 @@ This directory extends the modular Hebbian-CNN benchmark:
 - matched intervention: the same benchmark configuration with the local update mode replaced by HPCA.
 
 As in the SoftHebb replication, architecture, competition, preprocessing, normalization, schedule, and readout settings should remain fixed within each matched comparison. The directory must document the upstream commit and all local modifications.
-
-## Code availability statement
-
-The source code and executable configuration files used in this study are available in this anonymized repository for peer review at **PLACEHOLDER URL**. The archived version corresponding to the reported experiments is identified by **PLACEHOLDER ARCHIVE DOI OR RELEASE TAG**.
-
-The repository contains separate implementations and executable configurations for:
-
-- fully connected HPCA;
-- locally connected HPCA;
-- original SoftHebb reference;
-- original SoftHebb architecture with HPCA substitution;
-- modular Hebbian-CNN Hard-WTA BCM reference; and
-- modular Hebbian-CNN with HPCA substitution.
-
-The two convolutional experiment folders are derived from the public upstream repositories listed above. Their local documentation identifies the upstream revision, modified files, added HPCA modes, configuration files, random seeds, and commands required to reproduce the reported conditions.
 
 ## Environment
 
@@ -194,24 +172,6 @@ Boolean values accept `true/false`, `1/0`, `yes/no`, or `y/n`, without case sens
 | `use_extended_readout` | `True` | Enables one supervised GELU hidden layer before the classifier. `False` gives a linear classifier on the frozen representation. |
 | `head_units` | `2048` | Width of the optional supervised GELU readout layer. |
 
-### Fixed settings in the supplied local script
-
-The following values are defined directly in the source and are not currently exposed as command-line arguments:
-
-| Setting | Value |
-|---|---:|
-| HPCA units, `N_post` | `20000` |
-| Receptive-field width, `p` | `5` |
-| Initial requested population count | `1000` |
-| Divisive-normalization stabilizer, `beta` | `1e-3` |
-| Energy-pooling group size | `16` |
-| Readout optimizer | Adam |
-| Readout learning rate | `0.003` |
-| Readout epochs | `500` |
-| Test batch size | `128` |
-
-Changing these values defines a different experimental configuration and should be recorded in a separate config or run script.
-
 ## Mapping paper conditions to local options
 
 The following settings reproduce the architectural switches implemented by the local script. Use the exact seed list and any dataset-specific settings committed in `local/configs/` for the final repeated experiments.
@@ -224,9 +184,6 @@ The following settings reproduce the architectural switches implemented by the l
 | No energy-pooling ablation | standard local settings plus `use_energy_pooling=False` |
 | Linear-readout ablation | standard local settings plus `use_extended_readout=False` |
 | No divisive normalization | standard local settings plus `use_divisive_norm=False`; this is an implementation option and should only be reported if it belongs to the registered experiment matrix |
-| Optimizer-switch variant | same frozen local HPCA representation and nonlinear readout, with the dedicated plateau-triggered Adam-to-SGD readout configuration supplied separately in `local/configs/` or `local/scripts/` |
-
-The optimizer-switch condition is not implemented by the attached base entry point. It must be run through the dedicated script or configuration archived with the reported experiments.
 
 ## Running the local experiments
 
@@ -235,8 +192,6 @@ Run commands from the `local/` directory:
 ```bash
 cd local
 ```
-
-The examples below assume that the archived local entry point exposes the dataset as `dataset=mnist`, `dataset=cifar10`, or `dataset=stl10`. See **Dataset-selection requirement** below if the checked-in script still hardcodes CIFAR-10.
 
 ### Standard locally connected HPCA
 
@@ -256,7 +211,7 @@ python local_connected_hebbian_experiment.py \
   eps=5e-5
 ```
 
-Replace `dataset=cifar10` with `dataset=mnist` or `dataset=stl10` for the corresponding dataset-specific run.
+Replace `dataset=cifar10` with `dataset=stl10` for the corresponding dataset-specific run.
 
 ### Fully connected baseline
 
@@ -308,69 +263,6 @@ python local_connected_hebbian_experiment.py \
   use_extended_readout=False \
   batch_size=4000 epochs=20 eps=5e-5
 ```
-
-### Repeated runs
-
-Do not invent or substitute seed values. Use the exact seed list archived with the experiment configuration. A generic shell loop is:
-
-```bash
-mkdir -p results/logs
-
-while read -r seed; do
-  python local_connected_hebbian_experiment.py \
-    dataset=cifar10 \
-    seed="${seed}" \
-    deterministic=True \
-    use_mask=True \
-    augment=True \
-    use_divisive_norm=True \
-    use_energy_pooling=True \
-    use_extended_readout=True \
-    head_units=2048 \
-    batch_size=4000 \
-    epochs=20 \
-    eps=5e-5 \
-    2>&1 | tee "results/logs/cifar10_local_seed_${seed}.log"
-done < configs/seeds.txt
-```
-
-Apply the same seed list to matched conditions whenever the experimental design requires paired initialization and data-order controls.
-
-## Dataset-selection requirement
-
-The supplied code snapshot contains a CIFAR-10-specific main block:
-
-```python
-H, W, C = 32, 32, 3
-# ...
-dataset="cifar10"
-```
-
-It also builds the model using an input dimensionality of 3072. Therefore, a command containing `dataset=mnist` does not work unless the archived release includes a dataset-aware entry point or a separate MNIST script.
-
-Before journal archival, the `local/` folder must provide one of the following reproducible interfaces:
-
-1. a single entry point that parses `dataset=...` and derives `H`, `W`, `C`, and `input_dim`; or
-2. three explicitly named dataset-specific entry points or configs.
-
-For a unified entry point, the essential dataset specification is:
-
-```python
-DATASET_SPECS = {
-    "mnist":  {"H": 28, "W": 28, "C": 1, "downsample_stl": False},
-    "cifar10": {"H": 32, "W": 32, "C": 3, "downsample_stl": True},
-    "stl10":  {"H": 32, "W": 32, "C": 3, "downsample_stl": True},
-}
-
-dataset = get_cli_value(sys.argv[1:], "dataset", "cifar10", str).lower()
-spec = DATASET_SPECS[dataset]
-H, W, C = spec["H"], spec["W"], spec["C"]
-input_dim = H * W * C
-```
-
-`input_dim` must then replace every hardcoded model-build dimension of `3072`. The `dataset` key should also be accepted by the main parameter parser so that it is not reported as unknown.
-
-STL-10 can share the 3072-dimensional model when it is downsampled to 32 x 32. MNIST requires a 784-dimensional input layer.
 
 ## Running the SoftHebb replication folder
 
@@ -484,50 +376,6 @@ These values are included as end-to-end checks, not as tolerances for every hard
 | STL-10, original SoftHebb architecture with HPCA | 71.32 +/- 0.10 |
 
 Small numerical deviations can arise from hardware kernels and framework behavior. Material discrepancies should first be investigated against the archived commit, environment, preprocessing path, seed list, and exact run configuration.
-
-## Important reproducibility notes
-
-Resolve or explicitly document the following points before creating the final archival release.
-
-### Seed defaults
-
-The supplied script currently uses two fallback values: the initial global-seed parser defaults to `2`, while the parameter dictionary defaults to `10`. Always pass `seed=...` explicitly. A final release should use a single source of truth.
-
-### Hidden-width coupling
-
-Although `n_hidden` is parsed from the command line, the receptive-field mask is constructed using the fixed `N_post=20000`. Changing `n_hidden` alone causes a mask/weight shape mismatch. Expose `N_post` as the controlling option or keep `n_hidden` fixed in the archived configs.
-
-### Augmentation description
-
-The attached loader implements `orig`, horizontal flip, rotation, and spatial shift. Ensure that the manuscript, configuration files, and archived code describe the same augmentation set. Any Gaussian-noise or input-masking augmentation condition must have a corresponding implementation and executable config if it is claimed as part of the reported local experiments.
-
-### Optimizer-switch condition
-
-The attached base script uses Adam throughout the supervised readout stage and does not implement plateau detection or an Adam-to-SGD switch. The optimizer-switch result therefore requires a separate archived script or configuration containing the exact plateau criterion, SGD learning rate, momentum, and switch behavior.
-
-### Output persistence
-
-The attached local entry point does not save a trained model, checkpoint, or structured metrics file. The archived run wrappers should preserve logs and final metrics, and should save checkpoints if checkpoint-based verification is intended.
-
-### Computational resources
-
-The default local model uses 20,000 hidden units and a large dense weight/mask representation. Memory use is substantial, particularly with a batch size of 4,000 and multiple intermediate tensors. Reducing the batch size can be useful for a smoke test, but it changes the minibatch statistics used by the HPCA update and is not a reproduction of the reported configuration unless explicitly validated.
-
-## Reproduction checklist
-
-Before running a reported condition, verify:
-
-- the correct subfolder and upstream revision;
-- the archived environment;
-- the dataset and preprocessing path;
-- the exact seed list;
-- the connectivity regime;
-- the learning-rule mode;
-- augmentation settings;
-- divisive normalization and energy pooling;
-- readout architecture and optimizer schedule;
-- output directory; and
-- the source commit recorded with the result.
 
 ## License and upstream attribution
 
