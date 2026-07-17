@@ -1,4 +1,21 @@
 # SoftHebb
+
+> **Provenance and modification notice**
+>
+> This directory is based on the original
+> [SoftHebb repository](https://github.com/NeuromorphicComputing/SoftHebb)
+> by Adrien Journé, Hector Garcia Rodriguez, Qinghai Guo, and
+> Timoleon Moraitis.
+>
+> For the present study, additional experiment implementations were
+> introduced to evaluate HPCA within the original SoftHebb architecture
+> and to reproduce the corresponding SoftHebb reference condition.
+> In particular, the repository includes separate execution files for
+> the HPCA and SoftHebb conditions.
+>
+> The original upstream README is retained below for provenance,
+> attribution, usage instructions, and citation information.
+
 _This open source project is not an official Huawei product. Huawei is not expected to provide support for this project._
 ### Hebbian Deep Learning Without Feedback (ICLR 2023)
 
