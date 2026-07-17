@@ -1,3 +1,6 @@
+# Modified by Patrick Inoue, 2026.
+# Modifications: added HPCA learning-rule support and mode selection.
+
 import math
 
 import torch
