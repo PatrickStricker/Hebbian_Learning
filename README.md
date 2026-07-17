@@ -239,17 +239,6 @@ Repeated-run results are reported as mean and standard deviation over the archiv
 
 ## Citation
 
-If you use this repository or the HPCA implementation in research, please cite the accompanying manuscript:
-
-```bibtex
-@unpublished{inoue2026locality,
-  title  = {Locality and Weight Sharing Shape Hebbian Principal-Component Learning in Biologically Constrained Visual Models},
-  author = {Inoue, Patrick and Rohrbein, Florian and Knoblauch, Andreas},
-  note   = {Manuscript submitted for publication},
-  year   = {2026}
-}
-```
-
 The convolutional replication folders build on the following publications and codebases. Cite the corresponding work when using either replication component.
 
 ### SoftHebb
@@ -284,7 +273,7 @@ Upstream repository: <https://github.com/Julian-JN/Advancing-the-Biological-Plau
 
 ## License and third-party code
 
-The original TensorFlow implementation in `local/` is licensed under the Apache License 2.0; see `local/LICENSE`.
+The original TensorFlow implementation in `local/` is licensed under the Apache License 2.0; see `LICENSE`.
 
 The licensing scope does not override third-party rights:
 
