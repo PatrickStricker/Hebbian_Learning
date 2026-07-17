@@ -252,5 +252,5 @@ if __name__ == '__main__':
         config=config,
         progress_reporter=reporter,
         num_samples=params.num_samples,
-        storage_path=r"C:\Users\p-str\Documents\git-repos\SoftHebb\ray_results",#local_dir=SEARCH,
+        local_dir=SEARCH,
         name=params.folder_name)
