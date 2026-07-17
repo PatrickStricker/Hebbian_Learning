@@ -1,5 +1,18 @@
 # Advancing the Biological Plausibility and Efficacy of Hebbian Convolutional Neural Networks
 
+> **Modification notice**
+>
+> This directory is derived from the repository
+> [Advancing the Biological Plausibility and Efficacy of Hebbian
+> Convolutional Neural Networks](https://github.com/Julian-JN/Advancing-the-Biological-Plausibility-and-Efficacy-of-Hebbian-Convolutional-Neural-Networks)
+> by Julian Jimenez Nimmo and Esther Mondragon.
+>
+> For the present study, HPCA was added as an alternative local
+> learning rule, together with the corresponding experiment
+> configurations and evaluation paths. The original upstream README
+> is retained below for attribution and reference.
+
+
 This repository contains an implementation of a biologically-plausible deep learning framework that advances the state-of-the-art in Hebbian learning for Convolutional Neural Networks (CNNs). The framework achieves 76% accuracy on CIFAR-10 through careful integration of biologically-inspired mechanisms while maintaining competitive performance with backpropagation-based approaches. This model used a two-phase training approach: unsupervised Hebbian learning for feature extraction in convolutional layers, followed by a supervised classifier layer trained via backpropagation.
 
 Please refer to our paper **Advancing the Biological Plausibility and Efficacy of Hebbian Convolutional Neural Networks** for further theoretical and practical details. Our work builds upon previous contributions in Hebbian learning, including the SoftHebb architecture [Journé et al. 2022], foundational work on Hebbian CNNs with Hard-WTA [Amato et al. 2019], [Grinberg et al. 2019], and modern Hebbian gradient integration [Miconi 2021].
