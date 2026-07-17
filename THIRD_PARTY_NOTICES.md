@@ -26,8 +26,6 @@ The upstream repository did not provide an explicit `LICENSE`, `COPYING`, or equ
 
 The root Apache License 2.0 does not apply to upstream SoftHebb code or to portions derived from it. No additional license rights to the upstream SoftHebb material are granted by this repository. Upstream attribution and citation information must be retained.
 
-For public redistribution beyond anonymous peer review, permission from the relevant upstream rights holders or a clarified upstream license is required. An alternative is to distribute only original patches against a separately obtained upstream checkout.
-
 ## Original study code
 
 Directory: `local/`
