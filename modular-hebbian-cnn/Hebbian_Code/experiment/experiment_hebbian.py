@@ -1,3 +1,6 @@
+# Modified by Patrick Inoue, 2026.
+# Modifications: added HPCA weight-update support and mode selection.
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
