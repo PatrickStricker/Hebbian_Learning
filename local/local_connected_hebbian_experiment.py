@@ -478,7 +478,7 @@ def setup_model(pop_id, argv=None):
 if __name__ == '__main__':
 # *****************************************************************
 # *****************************************************************
-    seed = get_cli_value(sys.argv[1:], "seed", 2, int)
+    seed = get_cli_value(sys.argv[1:], "seed", 10, int)
     deterministic = get_cli_value(sys.argv[1:], "deterministic", True, str2bool)
 
     set_global_seed(seed, deterministic=deterministic)
