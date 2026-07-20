@@ -221,7 +221,7 @@ python local_connected_hebbian_experiment.py \
 
 ## Convolutional benchmark replications
 
-The `softhebb/` and `modular-hebbian-cnn/` directories preserve the respective benchmark implementations, the added HPCA modes, and the exact experiment configurations used for the reported reference and matched HPCA conditions. Each directory contains its own environment and execution documentation. Run convolutional experiments from within the corresponding directory so that its local imports and configuration paths are resolved correctly.
+The `softhebb/` and `modular-hebbian-cnn/` directories are based on the corresponding upstream source repositories cited below. Only the modifications required to implement and evaluate the HPCA learning rule, as described in this repository, were introduced. The remaining upstream code, including its original structure, auxiliary scripts, and dependency specifications, was left unchanged.
 
 The matched comparisons change the local learning rule while retaining the corresponding benchmark architecture, competition mechanism, preprocessing, normalization, training schedule, and supervised-readout protocol. Separately identified preprocessing or schedule sensitivity experiments use distinct configurations.
 
